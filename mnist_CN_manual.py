@@ -30,4 +30,3 @@ print(sess.run(
       y_: mnist.test.labels
   }))
 
-
