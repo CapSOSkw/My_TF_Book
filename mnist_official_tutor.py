@@ -49,7 +49,7 @@ def cnn_model_fn(features, labels, mode):
 
     logits = tf.layers.dense(inputs=dropout, units=10, name='logits')
 
-    writer = tf.summary.FileWriter('./logs', tf.get_default_graph())
+    writer = tf.summary.FileWriter('./logs', tf.Session().graph)
     writer.close()
 
     predictions = {
