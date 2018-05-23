@@ -162,7 +162,7 @@ def train_model(learning_rate, steps, batch_size):
     print("Final RMSE (on training data): %0.2f" % root_mean_squared_error)
 
 
-train_model(learning_rate=0.00001, steps=1000, batch_size=5)
+train_model(learning_rate=0.00001, steps=2000, batch_size=5)
 
 
 
