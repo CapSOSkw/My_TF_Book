@@ -131,8 +131,11 @@ def main(argv):
 
     feature_columns = [
         # "curb-weight" and "highway-mpg" are numeric columns.
-    #     tf.feature_column.numeric_column(key="curb-weight"),
-    #     tf.feature_column.numeric_column(key="highway-mpg"),
+        # tf.feature_column.numeric_column(key="curb-weight"),
+        # tf.feature_column.numeric_column(key="highway-mpg"),
+        # tf.feature_column.categorical_column_with_vocabulary_list(key='num-of-cylinders', vocabulary_list=(
+        #     'eight', 'five', 'four', 'six', 'three', 'twelve', 'two'
+        # )),
         tf.feature_column.numeric_column('horsepower'),
         # tf.feature_column.numeric_column('peak-rpm'),
         tf.feature_column.categorical_column_with_vocabulary_list(
@@ -143,8 +146,11 @@ def main(argv):
         )
     ]
 
-    model = tf.estimator.LinearRegressor(feature_columns=feature_columns)
-    model.train(input_fn=input_train, steps=10000)
+    # optimizer = tf.train.FtrlOptimizer(learning_rate=0.01, l2_regularization_strength=1)
+    # optimizer = tf.contrib.estimator.clip_gradients_by_norm(optimizer, 5.0)
+
+    model = tf.estimator.LinearRegressor(feature_columns=feature_columns, model_dir='./logs')
+    model.train(input_fn=input_train, steps=30000)
     eval_result = model.evaluate(input_fn=input_test)
     average_loss = eval_result["average_loss"]
 
