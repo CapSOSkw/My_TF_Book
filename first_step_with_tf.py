@@ -110,3 +110,62 @@ calibration_data = pd.DataFrame()
 calibration_data["predictions"] = pd.Series(predictions)
 calibration_data["targets"] = pd.Series(targets)
 print(calibration_data)
+
+
+# Tweak the Model Hyperparameters
+
+def train_model(learning_rate, steps, batch_size):
+    periods = 10
+    steps_per_period = steps / periods
+    my_feature = ["total_rooms", "population"]
+    my_feature_data = california_housing_dataframe[my_feature]
+    my_label = "median_house_value"
+    targets = california_housing_dataframe[my_label]
+
+    feature_total_rooms = tf.feature_column.numeric_column('total_rooms')
+    feature_population = tf.feature_column.numeric_column('population')
+
+    training_input_fn = lambda : my_input_fn(my_feature_data, targets, batch_size=batch_size)
+    prediction_input_fn = lambda : my_input_fn(my_feature_data, targets, num_epochs=1, shuffle=False)
+
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+    optimizer = tf.contrib.estimator.clip_gradients_by_norm(optimizer, 5)
+    lin_reg = tf.estimator.LinearRegressor(
+        feature_columns=[feature_total_rooms, feature_population],
+        optimizer=optimizer
+    )
+
+
+    print('Training models')
+    print('RMSE (on training data)')
+    root_mean_squared_errors = []
+    for period in range(periods):
+        lin_reg.train(
+            input_fn=training_input_fn,
+            steps=steps_per_period
+        )
+
+        pred = lin_reg.predict(input_fn=prediction_input_fn)
+        pred = np.array([item['predictions'][0] for item in pred])
+
+        root_mean_squared_error = math.sqrt(metrics.mean_squared_error(pred, targets))
+
+        print("  period %02d : %0.2f" % (period, root_mean_squared_error))
+
+        root_mean_squared_errors.append(root_mean_squared_error)
+
+    calibration_data = pd.DataFrame()
+    calibration_data["predictions"] = pd.Series(predictions)
+    calibration_data["targets"] = pd.Series(targets)
+    print(calibration_data.describe())
+
+    print("Final RMSE (on training data): %0.2f" % root_mean_squared_error)
+
+
+train_model(learning_rate=0.00001, steps=1000, batch_size=5)
+
+
+
+
+
+
