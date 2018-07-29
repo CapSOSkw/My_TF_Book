@@ -17,5 +17,5 @@ writer.close()
 '''
 Then enter command:
 tensorboard --logdir /path/to/logs
-Open url: localhost:port
+Open url: localhost:port, default localhost:6006
 '''

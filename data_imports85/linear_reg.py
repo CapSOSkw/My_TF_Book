@@ -91,12 +91,13 @@ def preprocess_data():
 
     types = OrderedDict((key, type(value[0]))
                                     for key, value in defaults.items())
+
     df = pd.read_csv('imports-85.data', names=types.keys(), dtype=types, na_values="?")
 
     df = df.dropna()
     np.random.seed(None)
 
-    x_train = df.sample(frac=0.7, random_state=None)
+    x_train = df.sample(frac=0.8, random_state=None)
     x_test = df.drop(x_train.index)
 
     y_train = x_train.pop('price')
@@ -109,6 +110,7 @@ def preprocess_data():
     test = Dataset.from_tensor_slices((x_test, y_test))
 
     return train, test
+
 
 def main(argv):
     train, test = preprocess_data()
@@ -157,6 +159,7 @@ def main(argv):
     print("\n" + 80 * "*")
     print("\nRMS error for the test set: ${:.0f}"
           .format(1000 * average_loss ** 0.5))
+
 
 if __name__ == '__main__':
     tf.logging.set_verbosity(tf.logging.INFO)
